@@ -9,12 +9,12 @@ import java.time.LocalTime;
 public class LocalTimePersistenceConverter implements AttributeConverter<LocalTime, Time> {
 	@Override
 	public Time convertToDatabaseColumn(LocalTime entityValue) {
-		return Time.valueOf(entityValue);
+		return entityValue != null ? Time.valueOf(entityValue) : null;
 	}
 
 	@Override
 	public LocalTime convertToEntityAttribute(
 			Time databaseValue) {
-		return databaseValue.toLocalTime();
+		return databaseValue != nul ? databaseValue.toLocalTime() : null;
 	}
 }
