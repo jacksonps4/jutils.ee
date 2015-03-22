@@ -15,6 +15,6 @@ public class LocalTimePersistenceConverter implements AttributeConverter<LocalTi
 	@Override
 	public LocalTime convertToEntityAttribute(
 			Time databaseValue) {
-		return databaseValue != nul ? databaseValue.toLocalTime() : null;
+		return databaseValue != null ? databaseValue.toLocalTime() : null;
 	}
 }
