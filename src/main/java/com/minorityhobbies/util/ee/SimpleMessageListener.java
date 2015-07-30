@@ -12,6 +12,7 @@ class SimpleMessageListener implements Runnable, Closeable {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Connection connection;
     private final Destination source;
+    private final String sourceName;
     private final MessageListener messageListener;
 
     private final AtomicLong idleNanos = new AtomicLong();
@@ -25,6 +26,14 @@ class SimpleMessageListener implements Runnable, Closeable {
     public SimpleMessageListener(Connection connection, Destination source, MessageListener messageListener) {
         this.connection = connection;
         this.source = source;
+        this.sourceName = null;
+        this.messageListener = messageListener;
+    }
+
+    public SimpleMessageListener(Connection connection, String sourceName, MessageListener messageListener) {
+        this.connection = connection;
+        this.source = null;
+        this.sourceName = sourceName;
         this.messageListener = messageListener;
     }
 
@@ -32,6 +41,10 @@ class SimpleMessageListener implements Runnable, Closeable {
     public void run() {
         try {
             session = connection.createSession();
+            Destination source = this.source;
+            if (sourceName != null) {
+                source = session.createTopic(sourceName);
+            }
             consumer = session.createConsumer(source);
         } catch (JMSException e) {
             logger.error("Failed to create consumer", e);

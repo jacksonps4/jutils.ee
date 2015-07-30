@@ -15,6 +15,7 @@ public class MessageProcessor implements Runnable, AutoCloseable {
     private final ConnectionFactory connectionFactory;
     private final MessageListener messageListener;
     private final Destination source;
+    private final String sourceName;
     private final int concurrencyLevel;
     private final List<SimpleMessageListener> listeners = new LinkedList<>();
 
@@ -25,7 +26,18 @@ public class MessageProcessor implements Runnable, AutoCloseable {
         this.threads = Executors.newFixedThreadPool(concurrencyLevel);
         this.connectionFactory = connectionFactory;
         this.source = source;
+        this.sourceName = null;
 
+        this.messageListener = messageListener;
+        this.concurrencyLevel = concurrencyLevel;
+    }
+
+    public MessageProcessor(ConnectionFactory connectionFactory, String sourceName, MessageListener messageListener,
+                            int concurrencyLevel) {
+        this.threads = Executors.newFixedThreadPool(concurrencyLevel);
+        this.connectionFactory = connectionFactory;
+        this.source = null;
+        this.sourceName = sourceName;
 
         this.messageListener = messageListener;
         this.concurrencyLevel = concurrencyLevel;
@@ -36,9 +48,7 @@ public class MessageProcessor implements Runnable, AutoCloseable {
         try {
             connection = connectionFactory.createConnection();
 
-            for (int i = 0; i < concurrencyLevel; i++) {
-                addNewListener();
-            }
+            addNewListener();
             connection.start();
 
             while (!Thread.currentThread().isInterrupted()) {
@@ -63,10 +73,16 @@ public class MessageProcessor implements Runnable, AutoCloseable {
     }
 
     private void addNewListener() {
-        SimpleMessageListener ml = new SimpleMessageListener(connection, source, messageListener);
+        SimpleMessageListener ml;
+        if (source != null) {
+            ml = new SimpleMessageListener(connection, source, messageListener);
+        } else {
+            ml = new SimpleMessageListener(connection, sourceName, messageListener);
+        }
+
         threads.submit(ml);
         listeners.add(ml);
-        logger.debug("Added new listener. Total = " + listeners.size());
+        logger.info("Added new listener. Total = " + listeners.size());
     }
 
     @Override
