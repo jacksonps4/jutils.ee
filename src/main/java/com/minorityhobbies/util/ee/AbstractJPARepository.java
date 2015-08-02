@@ -11,14 +11,31 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.Root;
 
+/**
+ * Java Persistence API (JPA) data-access-object. Provides standard CRUD (create, read, update, delete) operations
+ * for any JPA entity. Subclasses can simply delegate to these methods for simple cases. For more complex operations,
+ * a combination of these methods may be used. For very specific cases, the subclass can perform an operation directly
+ * on the {@link EntityManager}.
+ *
+ * In a Java EE container, the entity manager will be automatically injected into this class so there is no need
+ * to do so in a subclass.
+ */
 public class AbstractJPARepository {
 	@PersistenceContext
 	EntityManager entityManager;
 
+	/**
+	 * Creates a new AbstractJPARepository instance.
+	 */
 	public AbstractJPARepository() {
 		super();
 	}
 
+	/**
+	 * Generally only required for testing outside of a Java EE environment.
+	 *
+	 * @param entityManager	The entity manager for this class to use.
+	 */
 	public AbstractJPARepository(EntityManager entityManager) {
 		super();
 		this.entityManager = entityManager;

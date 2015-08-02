@@ -7,15 +7,15 @@ import javax.websocket.CloseReason;
 import javax.websocket.EndpointConfig;
 import javax.websocket.Session;
 import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
-public class OutboundWebSocketService {
+class OutboundWebSocketService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final List<Session> websocketSessions = new CopyOnWriteArrayList<>();
+    private final Set<Session> websocketSessions = new CopyOnWriteArraySet<>();
 
     public void newSession(Session session, EndpointConfig config) {
-        websocketSessions.add(session);
+        websocketSessions.add(new SessionIdWrapper(session));
     }
 
     public void onMessage(String event) {
@@ -23,7 +23,7 @@ public class OutboundWebSocketService {
     }
 
     public void endSession(Session session, CloseReason closeReason) {
-        websocketSessions.remove(session);
+        websocketSessions.remove(new SessionIdWrapper(session));
     }
 
     public void publish(String event) {
