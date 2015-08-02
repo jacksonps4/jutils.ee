@@ -6,7 +6,7 @@
 		<version>1.9</version>
 	</parent>
 	<artifactId>jutils.ee</artifactId>
-	<version>1.6-SNAPSHOT</version>
+	<version>1.5-SNAPSHOT</version>
 	<name>JUtils for Java EE</name>
 
 	<scm>
