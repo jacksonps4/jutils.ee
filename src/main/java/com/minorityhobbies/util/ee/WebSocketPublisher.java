@@ -72,7 +72,7 @@ public class WebSocketPublisher {
      * This is invoked when a websocket session is closed.
      *
      * @param session   The websocket session
-     * @param config    The endpoint config
+     * @param closeReason  The reason for closure
      */
     protected void sessionClosed(javax.websocket.Session session, CloseReason closeReason) { }
 }
