@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.minorityhobbies</groupId>
 		<artifactId>java8.pom</artifactId>
-		<version>1.5</version>
+		<version>1.9</version>
 	</parent>
 	<artifactId>jutils.ee</artifactId>
 	<version>1.5-SNAPSHOT</version>
