@@ -65,7 +65,9 @@ public class BatchStatusMailer implements Runnable {
 		MimeMessage msg = new MimeMessage(mailSession);
 		try {
 			msg.setSubject(mail.getSubject());
-			msg.setSender(new InternetAddress(mail.getFrom()));
+			InternetAddress from = new InternetAddress(mail.getFrom());
+			msg.setSender(from);
+			msg.setFrom(from);
 			msg.setRecipient(RecipientType.TO, new InternetAddress(mail.getTo()));
 			msg.setSentDate(new Date());
 			msg.setText(listSteps(execution, steps));
