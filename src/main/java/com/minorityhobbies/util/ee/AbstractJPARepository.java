@@ -41,7 +41,7 @@ public class AbstractJPARepository {
 		this.entityManager = entityManager;
 	}
 
-	protected final void persist(Object... entities) {
+	protected void persist(Object... entities) {
 		try {
 			for (Object entity : entities) {
 				entityManager.persist(entity);
@@ -51,7 +51,7 @@ public class AbstractJPARepository {
 		}
 	}
 	
-	protected final void merge(Object... entities) {
+	protected void merge(Object... entities) {
 		try {
 			for (Object entity : entities) {
 				entityManager.merge(entity);
@@ -61,7 +61,7 @@ public class AbstractJPARepository {
 		}
 	}
 
-	protected final <T> int deleteById(long id, Class<T> type) {
+	protected <T> int deleteById(long id, Class<T> type) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaDelete<T> delete = cb.createCriteriaDelete(type);
 		Root<T> root = delete.getRoot();
@@ -71,7 +71,7 @@ public class AbstractJPARepository {
 		return q.executeUpdate();
 	}
 	
-	protected final <T> T getUnique(String jpaQuery, Class<T> type,
+	protected <T> T getUnique(String jpaQuery, Class<T> type,
 			Object... params) {
 		TypedQuery<T> query = getEntityManager().createQuery(jpaQuery, type);
 		for (int i = 1; i <= params.length; i++) {
@@ -80,11 +80,11 @@ public class AbstractJPARepository {
 		return query.getSingleResult();
 	}
 
-	protected final <T> T getUniqueById(Class<T> type, Object id) {
+	protected <T> T getUniqueById(Class<T> type, Object id) {
 		return entityManager.find(type, id);
 	}
 			
-	protected final <T> T getNullableUnique(String jpaQuery, Class<T> type,
+	protected <T> T getNullableUnique(String jpaQuery, Class<T> type,
 			Object... params) {
 		try {
 			return getUnique(jpaQuery, type, params);
@@ -93,7 +93,7 @@ public class AbstractJPARepository {
 		}
 	}
 	
-	protected final <T> List<T> get(String jpaQuery, Class<T> type,
+	protected <T> List<T> get(String jpaQuery, Class<T> type,
 			Object... params) {
 		TypedQuery<T> query = getEntityManager().createQuery(jpaQuery, type);
 		for (int i = 1; i <= params.length; i++) {
@@ -102,7 +102,7 @@ public class AbstractJPARepository {
 		return query.getResultList();
 	}
 
-	protected final <T> List<T> getWithLimit(String jpaQuery, Class<T> type,
+	protected <T> List<T> getWithLimit(String jpaQuery, Class<T> type,
 			int limit, Object... params) {
 		TypedQuery<T> query = getEntityManager().createQuery(jpaQuery, type);
 		for (int i = 1; i <= params.length; i++) {
@@ -111,7 +111,7 @@ public class AbstractJPARepository {
 		return query.setMaxResults(limit).getResultList();
 	}
 
-	protected final EntityManager getEntityManager() {
+	protected EntityManager getEntityManager() {
 		return entityManager;
 	}
 }
