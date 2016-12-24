@@ -1,8 +1,11 @@
 package com.minorityhobbies.util.ee;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.websocket.*;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A broadcast websocket endpoint to which clients can connect to receive messages.
@@ -12,9 +15,20 @@ import java.util.Map;
  */
 public class WebSocketPublisher {
     private static final Map<Class<? extends WebSocketPublisher>, OutboundWebSocketService> WEBSOCKET_PUBLISHERS
-            = new HashMap<>();
-    private final OutboundWebSocketService outboundWebSocketService =
-            WEBSOCKET_PUBLISHERS.computeIfAbsent(getClass(), c -> new OutboundWebSocketService());
+            = new ConcurrentHashMap<>();
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final OutboundWebSocketService outboundWebSocketService;
+
+    public WebSocketPublisher() {
+        this.outboundWebSocketService = WEBSOCKET_PUBLISHERS
+                .computeIfAbsent(getClass(), k -> init(k));
+    }
+
+    private OutboundWebSocketService init(Class<?> clazz) {
+        logger.debug(String.format("Creating new websocket publisher for class %s", clazz));
+        return new OutboundWebSocketService();
+    }
 
     /**
      * Inspects an event and returns true if the event should be published to all socket endpoints.
@@ -37,6 +51,8 @@ public class WebSocketPublisher {
 
     @OnOpen
     public final void onOpen(javax.websocket.Session session, EndpointConfig config) {
+        logger.debug(String.format("Opening websocket session %s", session.getId()));
+
         outboundWebSocketService.newSession(session, config);
         sessionOpened(session, config);
     }
@@ -61,6 +77,8 @@ public class WebSocketPublisher {
 
     @OnClose
     public final void onClose(javax.websocket.Session session, CloseReason closeReason) {
+        logger.debug(String.format("Closing websocket session %s for reason %s", session.getId(), closeReason.toString()));
+
         outboundWebSocketService.endSession(session, closeReason);
         sessionClosed(session, closeReason);
     }
